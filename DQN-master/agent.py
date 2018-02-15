@@ -87,7 +87,7 @@ class QAgent(object):
     def sample_action(self,state,epsilon):
         """
         Sample an action for the state according to the epsilon greedy strategy
-dict.has_key() –
+
         :param state:
         :param epsilon:
         :return:
@@ -97,7 +97,7 @@ dict.has_key() –
         else:
             return self.session.run(self.net.q, feed_dict={self.net.x: state[np.newaxis].astype(np.float32)})[0].argmax()
 
-    def update_state(self, old_state, new_frame):
+    def update_state(self, old_state, new_frame): #COMBINE OLD STATE AND NEW FRAME
         """
 
         :param old_state:
@@ -112,8 +112,7 @@ dict.has_key() –
     def reset_to_zero_state(self):
         """
         Reset the state history to zeros and reset the environment to fill the first state
-        :retx 5 is out of bounds for axis 0 with size 4
-urn:
+        :return:
         """
         return np.concatenate([
                     np.zeros(self.config['state_shape']+[self.config['state_time']-1]),
@@ -127,14 +126,16 @@ urn:
         self.steps += 1
 
 
-    def train_episode(self):
+    def train_episode(self): #TRAIN FOR A COMPLETE EPISODE
         # Load the last state and add a reset
         state = self.update_state(
-            self.get_training_state(),
-            self.config['frame'](self.env.reset())
+            self.get_training_state(), #GET LAST STATE FROM REPLAY MEMORY
+            self.config['frame'](self.env.reset()) #ADDS A RESET STATE DONT KNOW WHY
         )
 
-        # Store the starting state in memory
+        #print(state) #PRINT THE STATE
+
+        # Store the starting state in memory ONLY START STATE
         self.replay_memory.add(
             state = state[:,:,-1],
             action = np.random.randint(self.config['actions']),
@@ -143,29 +144,28 @@ urn:
         )
 
         # Use flags to signal the end of the episode and for pressing the start button
-        done = False
-        press_fire = True
-        total_reward = 0
-        while not done:
-            if press_fire: # start the episode
-                press_fire = False
-                new_frame,reward,done, info = self.act(state,-1,True)
+        done = False # FLAG FOR IS THE GAME DONE
+        press_fire = True # FLAG FOR START GAME
+        total_reward = 0 # RETURNS
+        while not done: #WHILE NOT END OF EPISODE
+            if press_fire: # START THE EPISODE
+                press_fire = False # SO THAT IT DOES NOT RESET AGAIN AND AGAIN
+                new_frame,reward,done, info = self.act(state,-1,True) # TAKE AN ACTION
                 if 'ale.lives' in info:
                     self.ale_lives = info['ale.lives']
-            else:
+            else: #END IT?
                 self.update_epsilon_and_steps()
                 new_frame,reward,done, info = self.act(state,self.epsilon,True)
-            state = self.update_state(state, new_frame)
-            total_reward += reward
+            state = self.update_state(state, new_frame) #CONCATENATE THE CURRENT AND THE NEXT STATE
+            total_reward += reward #ADD THE REWARD
 
-            if self.steps > self.config['step_startrl']:
+            if self.steps > self.config['step_startrl']: #DONT KNOW "CURRENT STEP TO NEXT MAYBE"
                 summaries,_ = self.train_batch()
                 if self.steps % self.config['tensorboard_interval'] == 0:
                     self.train_writer.add_summary(summaries, global_step=self.steps)
                 if self.steps % self.config['double_q_freq'] == 0.:
-                    print("double q swap")
-                    self.update_target_network()
-
+                    print("double q swap") 
+                    self.update_target_network() #DDQN
         return total_reward
 
 
@@ -186,7 +186,7 @@ urn:
                 self.env.render()
         return total_reward
 
-    def act(self, state, epsilon, store=False):
+    def act(self, state, epsilon, store=False): #PERFORM AN ACTION AND ADD TO REPLAY IF NECESSARY
         """
         Perform an action in the environment.
 
@@ -199,16 +199,17 @@ urn:
         :return: the observed state (processed), the reward and whether the state is final
         """
         if epsilon == -1:
-            action = 1
+            action = 10 #NO OPERATION
         else:
             action = self.sample_action(state=state,epsilon=epsilon)
-        raw_frame, reward, done, info = self.env.step(action)
-
+        raw_frame, reward, done, info = self.env.step(action) #TAKE THE ACTION IN THE ENVIRONMENT AND COLLECT THE FRAME, REWARD, IF THE GAME IS DONE and INFO
+        #print raw_frame, reward, done, info #PRINT THE ABOVE THINGS
+        
         # Clip rewards to -1,0,1
-        reward = np.sign(reward)
+        reward = np.sign(reward) #WHY?
 
         # Preprocess the output state
-        new_frame = self.config['frame'](raw_frame)
+        new_frame = self.config['frame'](raw_frame) #CROP THE NEW FRAME
 
         # If needed, store the last frame
         if store:
@@ -218,14 +219,14 @@ urn:
             # By marking the end of the reward propagation, the maximum reward is limited
             # This makes learning faster.
             store_done = done
-            if self.ale_lives is not None and 'ale.lives' in info and info['ale.lives']<self.ale_lives:
+            if self.ale_lives is not None and ('ale.lives' in info) and info['ale.lives']<self.ale_lives:
                 store_done = True
                 self.ale_lives = info['ale.lives']
             self.replay_memory.add(state[:,:,-1],action,reward,store_done)
         return new_frame, reward, done, info
 
 
-    def train_batch(self):
+    def train_batch(self): #WHERE THE TRAINING TAKES PLACE
         """
         Sample a batch of training samples from the replay memory.
         Compute the target Q values
