@@ -16,10 +16,10 @@ if __name__ == '__main__':
     saver = tf.train.Saver() #HELPS TO SAVE AND RETRIEVE VARIABLES TO AND FROM CHECKPOINTS
 
     ###CHANGE WHEN RESTARTING FROM A CHECKPOINT###
-    load_episode=0
+    load_episode=-1
     # saver.restore(agent.session,'log/2018-02-16_18-44-13_SuperMarioAllStarsDeterministic-v4_False/episode_%d.ckpt'%(load_episode))
     # agent.set_agent()
-
+    load_episode+=1
     ###END CHANGE###
 
     for episode in range(load_episode,config['episodes']): #FOR EACH EPISODE
