@@ -39,8 +39,12 @@ class QAgent(object):
             self.episode = tf.Variable(0.,name='episode')
             self.training_reward = tf.Variable(0.,name='training_reward')
             self.validation_reward = tf.Variable(0.,name='validation_reward')
+            self.epsilon = tf.Variable(1.,name="epsilon") ################################################
+            self.steps = tf.Variable(0, name="steps") ####################################################
             tf.summary.scalar(name='training_reward',tensor=self.training_reward)
             tf.summary.scalar(name='validation_reward',tensor=self.validation_reward)
+            tf.summary.scalar(name='epsilon',tensor=self.epsilon) ########################################
+            tf.summary.scalar(name='steps',tensor=self.steps) ############################################
 
         # Create tensorflow variables
         self.session = tf.Session()
@@ -51,8 +55,8 @@ class QAgent(object):
         if log_dir is not None:
             self.train_writer = tf.summary.FileWriter(self.log_dir, self.session.graph)
 
-        self.epsilon = 1.0
-        self.steps = 0
+        self.eps=self.session.run(self.epsilon) #########################################################
+        self.steps_taken=self.session.run(self.steps) ###################################################
 
     def update_target_network(self):
         """
@@ -119,18 +123,34 @@ class QAgent(object):
                     self.config['frame'](self.env.reset())
                 ],axis=2)
 
+    def set_agent(self): ###############################################################################
+        self.eps=self.session.run(self.epsilon)
+        self.steps_taken=self.session.run(self.steps)
 
-    def update_epsilon_and_steps(self):
-        if self.steps > self.config['step_startrl']:
-            self.epsilon = max(self.config['eps_minval'],self.epsilon*self.config['step_eps_mul']-self.config['step_eps_min'])
-        self.steps += 1
+    def update_epsilon_and_steps(self): #################################################################
+        if self.steps_taken > self.config['step_startrl']:
+            self.eps = max(self.config['eps_minval'],self.eps*self.config['step_eps_mul']-self.config['step_eps_min'])
+        self.steps_taken += 1
 
+    def get_steps(self): ###############################################################################
+        return self.steps_taken
+
+    def get_epsilon(self): #############################################################################
+        return self.eps
+
+    def _update_steps_and_epsilon(self): ###############################################################
+        print("Called it")
+        print("Value Eps : "+str(self.eps))
+        print("Vales steps_taken : "+str(self.steps_taken))
+        self.session.run(self.epsilon.assign(self.eps))
+        self.session.run(self.steps.assign(self.steps_taken))
+        
 
     def train_episode(self): #TRAIN FOR A COMPLETE EPISODE
         # Load the last state and add a reset
         state = self.update_state(
             self.get_training_state(), #GET LAST STATE FROM REPLAY MEMORY
-            self.config['frame'](self.env.reset()) #ADDS A RESET STATE DONT KNOW WHY
+            self.config['frame'](self.env.reset()) #ADDS A RESET STATE
         )
 
         #print(state) #PRINT THE STATE
@@ -155,15 +175,15 @@ class QAgent(object):
                     self.ale_lives = info['ale.lives']
             else: #END IT?
                 self.update_epsilon_and_steps()
-                new_frame,reward,done, info = self.act(state,self.epsilon,True)
+                new_frame,reward,done, info = self.act(state,self.eps,True)
             state = self.update_state(state, new_frame) #CONCATENATE THE CURRENT AND THE NEXT STATE
             total_reward += reward #ADD THE REWARD
 
-            if self.steps > self.config['step_startrl']: #DONT KNOW "CURRENT STEP TO NEXT MAYBE"
+            if self.steps_taken > self.config['step_startrl']: #CURRENT STEP TO NEXT MAYBE
                 summaries,_ = self.train_batch()
-                if self.steps % self.config['tensorboard_interval'] == 0:
-                    self.train_writer.add_summary(summaries, global_step=self.steps)
-                if self.steps % self.config['double_q_freq'] == 0.:
+                if self.steps_taken % self.config['tensorboard_interval'] == 0:
+                    self.train_writer.add_summary(summaries, global_step=self.steps_taken)
+                if self.steps_taken % self.config['double_q_freq'] == 0.:
                     print("double q swap") 
                     self.update_target_network() #DDQN
         return total_reward
