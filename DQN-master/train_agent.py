@@ -22,8 +22,8 @@ if __name__ == '__main__':
 
         if episode % config['episodes_validate']==0:
             print('Validate....\n==============')
-            # scores = [agent.validate_episode(epsilon=0.05) for i in range(config['episodes_validate_runs'])] # WITHOUT VISUALISATION
-            scores = [agent.validate_episode(epsilon=0.05, visualise=True) for i in range(config['episodes_validate_runs'])] # WITH VALIDATION
+            scores = [agent.validate_episode(epsilon=0.05) for i in range(config['episodes_validate_runs'])] # WITHOUT VISUALISATION
+            # scores = [agent.validate_episode(epsilon=0.05, visualise=True) for i in range(config['episodes_validate_runs'])] # WITH VALIDATION
             agent._update_validation_reward(np.mean(scores))
             print(scores)
         # Store every validation interval

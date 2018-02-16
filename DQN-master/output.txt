@@ -1,0 +1,3 @@
+Sound buffer size: 128000 (32000 samples)
+Core loaded
+Map_LoROMMap

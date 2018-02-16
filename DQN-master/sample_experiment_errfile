@@ -1,0 +1,22 @@
+R.L.E: Retro Learning Environment (version 1.1.1)
+[Based upon the Arcade Learning Environment (A.L.E)]
+[Powered by LibRetro]
+Use -help for help screen.
+[inf] Frontend supports RGB565 - will use that instead of XRGB1555.
+[inf] No ROM file header found.
+PPU.RenderSub = 0
+PPU.FullClipping = 1
+Settings.Transparency = 1
+Settings.SpeedhackGameID = 0
+PPU.SFXSpeedupHack = 0
+coldata_update_screen = 1
+[inf] "SUPER MARIO ALL_STARS" [checksum ok] LoROM, 16Mbits, ROM+RAM+BAT, NTSC, SRAM:64Kbits, ID:____, CRC32:925637C7
+Running ROM file...
+Random seed is 372956243
+2018-02-15 16:56:55.982642: I tensorflow/core/platform/cpu_feature_guard.cc:137] Your CPU supports instructions that this TensorFlow binary was not compiled to use: SSE4.1 SSE4.2 AVX AVX2 FMA
+2018-02-15 16:56:56.336455: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1030] Found device 0 with properties: 
+name: GeForce GTX 1060 6GB major: 6 minor: 1 memoryClockRate(GHz): 1.7085
+pciBusID: 0000:84:00.0
+totalMemory: 5.93GiB freeMemory: 5.86GiB
+2018-02-15 16:56:56.336603: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1120] Creating TensorFlow device (/device:GPU:0) -> (device: 0, name: GeForce GTX 1060 6GB, pci bus id: 0000:84:00.0, compute capability: 6.1)
+slurmstepd: error: *** JOB 6611 ON landonia19 CANCELLED AT 2018-02-15T18:56:10 DUE TO TIME LIMIT ***
