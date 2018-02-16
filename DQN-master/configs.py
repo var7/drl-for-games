@@ -53,8 +53,8 @@ mario_config = {
 
     'episodes': 10 ** 6,
     'episodes_validate': 100,
-    'episodes_validate_runs': 1,
-    'episodes_save_interval': 1,
+    'episodes_validate_runs': 10,
+    'episodes_save_interval': 10,
     'tensorboard_interval':100,
 
     'batch_size': 32,

@@ -139,9 +139,6 @@ class QAgent(object):
         return self.eps
 
     def _update_steps_and_epsilon(self): ###############################################################
-        print("Called it")
-        print("Value Eps : "+str(self.eps))
-        print("Vales steps_taken : "+str(self.steps_taken))
         self.session.run(self.epsilon.assign(self.eps))
         self.session.run(self.steps.assign(self.steps_taken))
         
