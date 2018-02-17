@@ -14,16 +14,17 @@ if __name__ == '__main__':
     log_dir = get_log_dir('log', config['game']+'_'+str(config['double_q']))#CREATE A LOG DIRECTORY FOR THE GIVEN GAME
     agent = QAgent(config=config, log_dir=log_dir) #CREATE THE AGENT WITH THE GIVEN CONFIGURATION AND SPECIFY THE DIRECTORY FOR SAVING THE LOGS
     saver = tf.train.Saver() #HELPS TO SAVE AND RETRIEVE VARIABLES TO AND FROM CHECKPOINTS
-
+    c=1
     load_episode=-1
 
     ###CHANGE WHEN RESTARTING FROM A CHECKPOINT###
-    # load_episode=20
-    #log_dir = 2018-02-17_15-59-51_SuperMarioAllStarsDeterministic-v4_False
-    # saver.restore(agent.session,'log/'+log_dir+'/episode_%d.ckpt'%(load_episode))
-    # agent.set_agent()
-    # agent.load_replay(log_dir)
-    ###END CHANGE###
+    load_episode=40
+    log_dir1 = "log/2018-02-17_18-41-47_SuperMarioAllStarsDeterministic-v4_False"
+    print(log_dir)
+    saver.restore(agent.session,log_dir1+'/episode_%d.ckpt'%(load_episode))
+    agent.set_agent()
+    agent.load_replay(log_dir1)
+    # ###END CHANGE###
     
     load_episode+=1
     for episode in range(load_episode,config['episodes']): #FOR EACH EPISODE
@@ -41,7 +42,11 @@ if __name__ == '__main__':
             agent._update_validation_reward(np.mean(scores))
             print(scores)
         # Store every validation interval
-        if episode % config['episodes_save_interval']==0:
+        if episode % int((config['episodes_save_interval'])/c)==0:
+            if((c<16)):
+                c*=4
+            else:
+                c=40
             agent._update_steps_and_epsilon()
             agent.save_replay(log_dir)
             saver.save(agent.session,'%s/episode_%d.ckpt'%(log_dir,episode))
