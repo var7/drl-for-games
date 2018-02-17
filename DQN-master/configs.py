@@ -59,7 +59,7 @@ mario_config = {
 
     'batch_size': 32,
 
-    'step_startrl': 5 * 10 ** 4,  #
+    'step_startrl': 5 * 10 ** 4, 
     'step_eps_min': 1. / (10. ** 6.),
     'step_eps_mul': 1.,
 

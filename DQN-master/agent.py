@@ -8,6 +8,7 @@ import gym
 import gym_rle
 from replay import Experience
 
+import pickle
 
 class QAgent(object):
     def __init__(self, config, log_dir):
@@ -15,6 +16,7 @@ class QAgent(object):
         self.log_dir = log_dir
 
         self.env = gym.make(config['game'])
+        self.env.seed(101010)
         self.ale_lives = None
 
         self.replay_memory = Experience(
@@ -41,6 +43,7 @@ class QAgent(object):
             self.validation_reward = tf.Variable(0.,name='validation_reward')
             self.epsilon = tf.Variable(1.,name="epsilon") ################################################
             self.steps = tf.Variable(0, name="steps") ####################################################
+            
             tf.summary.scalar(name='training_reward',tensor=self.training_reward)
             tf.summary.scalar(name='validation_reward',tensor=self.validation_reward)
             tf.summary.scalar(name='epsilon',tensor=self.epsilon) ########################################
@@ -50,7 +53,6 @@ class QAgent(object):
         self.session = tf.Session()
         self.session.run(tf.global_variables_initializer())
         self.update_target_network()
-
         self.summaries = tf.summary.merge_all()
         if log_dir is not None:
             self.train_writer = tf.summary.FileWriter(self.log_dir, self.session.graph)
@@ -141,7 +143,12 @@ class QAgent(object):
     def _update_steps_and_epsilon(self): ###############################################################
         self.session.run(self.epsilon.assign(self.eps))
         self.session.run(self.steps.assign(self.steps_taken))
-        
+    
+    def save_replay(self, log_dir):
+        pickle.dump(self.replay_memory,open(log_dir+"/replay_memory.mem", "wb"))
+
+    def load_replay(self, log_dir):
+        self.replay_memory = pickle.load( open(log_dir+"/replay_memory.mem", "rb" ))
 
     def train_episode(self): #TRAIN FOR A COMPLETE EPISODE
         # Load the last state and add a reset

@@ -36,6 +36,7 @@ class Experience(object):
         self.idx = (self.idx+1)%self.memory_size
 
     def can_sample(self,batch_size,state_length):
+        # print("Count : "+str(self.count))
         return self.count>batch_size+state_length
 
     def get_last_state(self,state_length):
@@ -54,6 +55,8 @@ class Experience(object):
         :param batch_size:
         :return:
         """
+        # print("Batch Size : "+str(batch_size))
+        # print("State Length : "+str(state_length))
         if not self.can_sample(batch_size,state_length):
             raise RuntimeError('Not enough experience....')
 
