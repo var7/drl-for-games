@@ -183,7 +183,7 @@ class QAgent(object):
             state = self.update_state(state, new_frame) #CONCATENATE THE CURRENT AND THE NEXT STATE
             total_reward += reward #ADD THE REWARD
 
-            if self.steps_taken > self.config['step_startrl']: #CURRENT STEP TO NEXT MAYBE
+            if self.steps_taken > self.config['step_startrl']: #CURRENT STEP TO NEXT
                 summaries,_ = self.train_batch()
                 if self.steps_taken % self.config['tensorboard_interval'] == 0:
                     self.train_writer.add_summary(summaries, global_step=self.steps_taken)
