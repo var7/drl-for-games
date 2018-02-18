@@ -18,8 +18,8 @@ if __name__ == '__main__':
     load_episode=-1
 
     ###CHANGE WHEN RESTARTING FROM A CHECKPOINT###
-    load_episode=315
-    log_dir1 = "log/2018-02-17_21-26-03_SuperMarioAllStarsDeterministic-v4_False"
+    load_episode=995
+    log_dir1 = "log/2018-02-18_04-10-30_SuperMarioAllStarsDeterministic-v4_False"
     print(log_dir)
     saver.restore(agent.session,log_dir1+'/episode_%d.ckpt'%(load_episode))
     agent.set_agent()
@@ -42,7 +42,7 @@ if __name__ == '__main__':
             agent._update_validation_reward(np.mean(scores))
             print(scores)
         # Store every validation interval
-        if episode % int((config['episodes_save_interval'])/(2*c))==0:
+        if (episode % int((config['episodes_save_interval'])/c)==0) and (episode!=1000):
             if((c<16)):
                 c*=4
             else:
