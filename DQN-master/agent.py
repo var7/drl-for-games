@@ -16,7 +16,7 @@ class QAgent(object):
         self.log_dir = log_dir
 
         self.env = gym.make(config['game'])
-        self.env.seed(101010)
+        # self.env.seed(101010)
         self.ale_lives = None
 
         self.replay_memory = Experience(
@@ -230,7 +230,7 @@ class QAgent(object):
         #print raw_frame, reward, done, info #PRINT THE ABOVE THINGS
         
         # Clip rewards to -1,0,1
-        reward = np.sign(reward) #WHY?
+        reward = np.sign(reward)
 
         # Preprocess the output state
         new_frame = self.config['frame'](raw_frame) #CROP THE NEW FRAME

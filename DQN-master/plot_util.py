@@ -5,7 +5,8 @@ from __future__ import print_function
 import numpy as np
 from matplotlib import pyplot as plt
 
-from gym.envs.atari.atari_env import ACTION_MEANING
+ACTION_MEANING = ['X', 'A', 'A | X', 'R', 'R|X', 'R|A', 'L', 'L|X', 'L|A', 'D', 'NOOP']
+
 def disable_ticks():
     plt.tick_params(
                 axis='x',          # changes apply to the x-axis
