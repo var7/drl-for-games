@@ -16,15 +16,15 @@ from configs import mario_config
 if __name__ == '__main__':
     config = mario_config
     config['state_memory']=1 # prevent allocating of a huge chunk of memory
-    load_episode = 1640
-    epsilon = 0.5 # The epsilon for the strategy
+    load_episode = 1980
+    epsilon = 0.1 # The epsilon for the strategy
 
     # Build the graph on CPU to keep gpu for training....
     with tf.device('/cpu:0'):
         agent = QAgent(config=config, log_dir=None)
 
     # Restore the values....
-    tf.train.Saver().restore(agent.session,'log/2018-02-18_13-33-27_SuperMarioAllStarsDeterministic-v4_False/episode_%d.ckpt'%(load_episode))
+    tf.train.Saver().restore(agent.session,'log/2018-02-18_22-12-59_SuperMarioAllStarsDeterministic-v4_False/episode_%d.ckpt'%(load_episode))
     tot_r=[[],[],[],[],[]]
     q_res=[[],[],[],[],[]]
     c=0
@@ -52,18 +52,22 @@ if __name__ == '__main__':
             r+=reward
             if reward != 0:
                 print(reward)
-            if reward==-1:
+            if (reward==-1):
                 tot_r[c].append(r+1)
                 r=0
+            # if done:
+            #     tot_r[c].append(r)
             # elif reward
             # update_figure(plots, steps, q, reward, agent.env.render(mode='rgb_array'))
             # plt.draw()
             # plt.pause(0.001)
         c+=1
+
+    # fig=plt.figure()
     # print(tot_r)
     # print()
-    res=[]
-    # print(tot_r.shape)
+    # res=[]
+    # # print(tot_r.shape)
     max=0
     for i in range(5):
         # plt.plot(tot_r[i])
@@ -72,16 +76,22 @@ if __name__ == '__main__':
         # plt.plot(q_res[i])
     for i in range(5):
         for j in range(max-len(tot_r[i])):
-            tot_r.append(0)
+            tot_r[i].append(0)
 
-    final_result=[]
-    for j in range(max):
-        sum=0
-        for i in range(5):
-            sum+=tot_r[i][j]
-        final_result.append(sum/float(max))
+    # final_result=[]
+    # for j in range(max):
+    #     sum=0
+    #     for i in range(5):
+    #         sum+=tot_r[i][j]
+    #     final_result.append(sum/float(max))
         
-    print(final_result)
-    plt.plot(final_result)
+    # print(final_result)
+    # plt.plot(final_result)
+    life=list(np.arange(1,max+1,1))
+    print(len(life))
+    for i in range(5):
+        # print(len(tot_r[i]))
+        plt.plot(life,tot_r[i])
     plt.show()
+    # plt.savefig('Images/CW3/'+str(load_episode)+'_diff.pdf')
     input()

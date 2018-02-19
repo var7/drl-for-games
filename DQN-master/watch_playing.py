@@ -9,15 +9,15 @@ import numpy as np
 from agent import QAgent
 from configs import mario_config
 
-load_episode=1640
+load_episode=1980
 config=mario_config
 
 
 agent = QAgent(config=config, log_dir=None)
 
-tf.train.Saver().restore(agent.session,'log/2018-02-18_13-33-27_SuperMarioAllStarsDeterministic-v4_False/episode_%d.ckpt'%(load_episode))
+tf.train.Saver().restore(agent.session,'log/2018-02-18_22-12-59_SuperMarioAllStarsDeterministic-v4_False/episode_%d.ckpt'%(load_episode))
 agent.set_agent()
 eps=agent.get_epsilon()
 # print(eps)
-scores = [agent.validate_episode(epsilon=0.6, visualise=True) for i in range(config['episodes_validate_runs'])] # WITH VALIDATION
+scores = [agent.validate_episode(epsilon=0.1, visualise=True) for i in range(config['episodes_validate_runs'])] # WITH VALIDATION
 print(scores)
