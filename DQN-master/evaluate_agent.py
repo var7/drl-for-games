@@ -16,15 +16,15 @@ from configs import mario_config
 if __name__ == '__main__':
     config = mario_config
     config['state_memory']=1 # prevent allocating of a huge chunk of memory
-    load_episode = 1980
-    epsilon = 0.1 # The epsilon for the strategy
+    load_episode = 2610
+    epsilon = 0.5 # The epsilon for the strategy
 
     # Build the graph on CPU to keep gpu for training....
     with tf.device('/cpu:0'):
         agent = QAgent(config=config, log_dir=None)
 
     # Restore the values....
-    tf.train.Saver().restore(agent.session,'log/2018-02-18_22-12-59_SuperMarioAllStarsDeterministic-v4_False/episode_%d.ckpt'%(load_episode))
+    tf.train.Saver().restore(agent.session,'log/2018-02-19_02-33-07_SuperMarioAllStarsDeterministic-v4_False/episode_%d.ckpt'%(load_episode))
     tot_r=[[],[],[],[],[]]
     q_res=[[],[],[],[],[]]
     c=0
