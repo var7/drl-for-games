@@ -55,10 +55,6 @@ def get_log_dir(log_base, suffix):
 
 def preprocess_supermario(frame):
     # print(type(frame))
-    cv2.imwrite('Original_Frame.png', cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
-
     frame=cv2.cvtColor(frame,cv2.COLOR_RGB2GRAY)
     frame=cv2.resize(frame,(84, 84),interpolation=cv2.INTER_LINEAR)
-    cv2.imwrite('Processed_Frame.png',frame[:,:,np.newaxis].astype(np.uint8))
-    input()
     return frame[:,:,np.newaxis].astype(np.uint8)
