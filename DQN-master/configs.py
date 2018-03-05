@@ -38,7 +38,7 @@ from util import preprocess_supermario
 # }
 
 mario_config = {
-    'double_q': False, # USE DDQN OR NOT
+    'double_q': True, # USE DDQN OR NOT
     'double_q_freq': 10000, #CHANGE FREQUENCY
 
     'game': 'SuperMarioAllStarsDeterministic-v4',
