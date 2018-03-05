@@ -66,6 +66,11 @@ mario_config = {
     'eps_minval': .1,
 
     'gamma': 0.99,
+
+    'beta_zero' : 0.5,
+    'alpha' : 0.7
+
+
 }
 
 
