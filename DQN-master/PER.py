@@ -7,8 +7,8 @@ from __future__ import absolute_import
 
 import numpy as np
 #import random
-import sum_tree
-from config import mario_config
+import Sum_Tree
+from configs import mario_config_PER
 
 class BetaSchedule(object):
     def __init__(self,step):
@@ -18,7 +18,7 @@ class BetaSchedule(object):
         self.beta_zero = self.config['beta_zero']
         self.learn_start = self.config['step_startrl']
         
-        self.total_steps = self.config['total_steps']
+        self.total_steps = 100#self.config['total_steps']
         self.beta_grad = (1 - self.beta_zero) / (self.total_steps - self.learn_start)
 
     def get_beta(self, global_step):
@@ -50,7 +50,7 @@ class Experience(object):
             Prob_i \sim priority_i**alpha/sum(priority**alpha)
         """
         self.config = mario_config
-        self.beta_sched = BetaSchedule()
+        self.beta_sched = BetaSchedule(step)
         self._max_priority = 1.0
 
         self.index = 0
@@ -60,9 +60,16 @@ class Experience(object):
 
         self.memory_size = self.config['state_memory']
         
-        self.tree = sum_tree.SumTree(self.memory_size)
+        self.tree = Sum_Tree.SumTree(self.memory_size)
         self.alpha = self.config['alpha']
         self.state_shape = self.config['state_shape']
+
+    def get_last_state(self,state_length):
+        state=np.zeros((4,84,84))
+        sta = self.tree.data[self.index-state_length:self.index]
+        for c,i in enumerate(sta):
+            state[c][:][:]=i[1]
+        return state.transpose(1,2,0)
 
     def fix_index(self):
         """
@@ -191,3 +198,10 @@ class Experience(object):
         pass
             
         
+if __name__ == '__main__':
+    e = Experience(0.1,500)
+    e.add(0,np.ones((84,84))*0, 0, 0, False)
+    e.add(1,np.ones((84,84))*1, 1, 1, False)
+    e.add(2,np.ones((84,84))*2, 2, 2, False)
+    e.add(3,np.ones((84,84))*3, 3, 3, False)
+    e.add(4,np.ones((84,84))*4, 4, 4, False)

@@ -68,11 +68,46 @@ mario_config = {
     'gamma': 0.99,
 
     'beta_zero' : 0.5,
-    'alpha' : 0.7
+    'alpha' : 0.7,
 
 
 }
 
+mario_config_PER = {
+    'double_q': False, # USE DDQN OR NOT
+    'double_q_freq': 10000, #CHANGE FREQUENCY
+
+    'game': 'SuperMarioAllStarsDeterministic-v4',
+    'frame': preprocess_supermario,
+    'q': AtariDQN,
+    'q_params': {},
+    'actions': 11,
+    'state_dtype': np.uint8,
+    'state_shape': [84, 84],
+    'state_memory': 10 ** 5,
+    'state_time': 4,
+
+    'episodes': 10 ** 6,
+    'episodes_validate': 100,
+    'episodes_validate_runs': 1,
+    'episodes_save_interval': 200,
+    'tensorboard_interval':100,
+
+    'batch_size': 32,
+
+    'step_startrl': 5 * 10 ** 4, 
+    'step_eps_min': 1. / (10. ** 6.),
+    'step_eps_mul': 1.,
+
+    'eps_minval': .1,
+
+    'gamma': 0.99,
+
+    'beta_zero' : 0.5,
+    'alpha' : 0.7,
+
+
+}
 
 # pong_config = {
 #     'double_q': True,

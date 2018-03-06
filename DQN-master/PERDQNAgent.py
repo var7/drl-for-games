@@ -6,7 +6,7 @@ import numpy as np
 import tensorflow as tf
 import gym
 import gym_rle
-from replay import Experience
+from PER import Experience
 
 import pickle
 
@@ -19,11 +19,7 @@ class QAgent(object):
         # self.env.seed(101010)
         self.ale_lives = None
 
-        self.replay_memory = Experience(
-            memory_size=config['state_memory'],
-            state_shape=config['state_shape'],
-            dtype=config['state_dtype']
-        )
+        
 
         self.net = config['q'](
             batch_size=config['batch_size'],
@@ -59,6 +55,8 @@ class QAgent(object):
 
         self.eps=self.session.run(self.epsilon) #########################################################
         self.steps_taken=self.session.run(self.steps) ###################################################
+
+        self.replay_memory = Experience(self.eps,self.steps_taken)
 
     def update_target_network(self):
         """
