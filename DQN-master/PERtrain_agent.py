@@ -42,11 +42,7 @@ if __name__ == '__main__':
             agent._update_validation_reward(np.mean(scores))
             print(scores)
         # Store every validation interval
-        if (episode % int((config['episodes_save_interval'])/c)==0):
-            if((c<16)):
-                c*=4
-            else:
-                c=40
+        if (episode % int((config['episodes_save_interval']))==0):
             agent._update_steps_and_epsilon()
             agent.save_replay(log_dir)
             saver.save(agent.session,'%s/episode_%d.ckpt'%(log_dir,episode))
