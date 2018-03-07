@@ -49,7 +49,7 @@ class Experience(object):
             exponent determine how much prioritization.
             Prob_i \sim priority_i**alpha/sum(priority**alpha)
         """
-        self.config = mario_config
+        self.config = mario_config_PER
         self.beta_sched = BetaSchedule(step)
         self._max_priority = 1.0
 
