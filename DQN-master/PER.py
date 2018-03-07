@@ -12,7 +12,7 @@ from configs import mario_config_PER
 
 class BetaSchedule(object):
     def __init__(self,step):
-        self.config = mario_config
+        self.config = mario_config_PER
         self.batch_size = self.config['batch_size']
 
         self.beta_zero = self.config['beta_zero']
