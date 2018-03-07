@@ -63,6 +63,7 @@ class Experience(object):
         self.tree = Sum_Tree.SumTree(self.memory_size)
         self.alpha = self.config['alpha']
         self.state_shape = self.config['state_shape']
+        self.state_length = self.config['state_time']
 
     def get_last_state(self,state_length):
         state=np.zeros((4,84,84))
@@ -95,7 +96,7 @@ class Experience(object):
         priority : float
             sample's priority
         """
-        self.count = min(self.memory_size,self.count+1)
+        # self.count = min(self.memory_size,self.count+1)
         self.state = state
         self.action = action
         self.reward = reward
@@ -111,7 +112,7 @@ class Experience(object):
         self.fix_index()
         
 
-    def sample(self,  batch_size, state_length, global_step):
+    def sample_experience(self,  batch_size, state_length, global_step):
         beta, batch_size = self.beta_sched.get_beta(global_step)
         return self.select(beta, batch_size=batch_size, state_length=state_length)
 
@@ -135,41 +136,52 @@ class Experience(object):
         
         if self.tree.filled_size() < batch_size:
             return None, None, None
-        startstatedata=np.zeros((batch_size,state_length,self.state_shape[0],self.state_shape[1]))
-        nextstatedata=np.zeros((batch_size,state_length,self.state_shape[0],self.state_shape[1]))
-        actions=np.zeros(batch_size)
+        startstatedata=np.zeros((batch_size,state_length,self.state_shape[0],self.state_shape[1])).astype(np.uint8)
+        nextstatedata=np.zeros((batch_size,state_length,self.state_shape[0],self.state_shape[1])).astype(np.uint8)
+        actions=np.zeros(batch_size).astype(np.uint8)
         rewards=np.zeros(batch_size)
         done = np.zeros(batch_size)
 
-
+        indices=[]
         weights = []
         priorities = []
         rand_vals = np.random.rand(batch_size)
         for s,r in enumerate(rand_vals):  #range(batch_size):
-            data, priority, index = self.tree.find(r)
-            if(index>self.memory_size-self.state_length):
-                while(index<=self.memory_size-self.state_length):
-                    data, priority, index = self.tree.find(np.random.rand())
+            # print(s)
+            # print("--------------------------------------")
+            data, priority, idx = self.tree.find(r)
+            # print("Index : ", idx)
+            while(idx>(self.index-self.state_length-1)):
+                data, priority, idx = self.tree.find(np.random.rand())
+            # print("F : ", idx)
             for i in range(state_length):
-                startstatedata[s][i][:][:]=self.tree.get_tuple(index+i)
+                # print(self.tree.get_tuple(index+i))
+                # print(type(self.tree.get_tuple(index+i)))
+                # print(idx+i)
+                startstatedata[s,i,:,:]=self.tree.get_tuple(idx+i)[1]
                 if(i==state_length-1):
                     actions[s] = data[2]
                     rewards[s] = data[3]
                     done[s] = data[4]
                 priorities.append(priority)
-                weights.append((1./self.memory_size/priority)**beta if priority > 1e-16 else 0)
-                indices.append(index)
-                data = self.tree.find(r+1+i)[0]
-                nextstatedata[s][:][:] = data[1]
+                # weights.append((1./self.memory_size/priority)**beta if priority > 1e-16 else 0)
+                indices.append(idx)
+                # print("_____________")
+                data=self.tree.get_tuple(idx+i+1)
+                # print(data)
+                # input()
+                nextstatedata[s,i,:,:] = self.tree.get_tuple(idx+i+1)[1]
                 # out.append(data)
+                # input()
 
+        # print("DONE")
         startstatedata=startstatedata.transpose(0,2,3,1)
         nextstatedata=nextstatedata.transpose(0,2,3,1)
 
         self.update_priority(indices, priorities) # Revert priorities
         # weights /= max(weights) # Normalize for stability
-        w = np.array(weights)
-        w = np.divide(w,max(w))
+        # w = np.array(weights)
+        # w = np.divide(w,max(w))
 
         return startstatedata, actions, rewards, done, nextstatedata
 
@@ -205,3 +217,4 @@ if __name__ == '__main__':
     e.add(2,np.ones((84,84))*2, 2, 2, False)
     e.add(3,np.ones((84,84))*3, 3, 3, False)
     e.add(4,np.ones((84,84))*4, 4, 4, False)
+    e.select(0.7, 2, 1)

@@ -150,6 +150,7 @@ class QAgent(object):
 
     def train_episode(self): #TRAIN FOR A COMPLETE EPISODE
         # Load the last state and add a reset
+        
         state = self.update_state(
             self.get_training_state(), #GET LAST STATE FROM REPLAY MEMORY
             self.config['frame'](self.env.reset()) #ADDS A RESET STATE
@@ -171,11 +172,13 @@ class QAgent(object):
         total_reward = 0 # RETURNS
         while not done: #WHILE NOT END OF EPISODE
             if press_fire: # START THE EPISODE
+                # print("PRESS FIRE")
                 press_fire = False # SO THAT IT DOES NOT RESET AGAIN AND AGAIN
                 new_frame,reward,done, info = self.act(state,-1,True) # TAKE AN ACTION
                 if 'ale.lives' in info:
                     self.ale_lives = info['ale.lives']
             else: #END IT?
+                # print("ELSE")
                 self.update_epsilon_and_steps()
                 new_frame,reward,done, info = self.act(state,self.eps,True)
             state = self.update_state(state, new_frame) #CONCATENATE THE CURRENT AND THE NEXT STATE
@@ -183,11 +186,13 @@ class QAgent(object):
 
             if self.steps_taken > self.config['step_startrl']: #CURRENT STEP TO NEXT
                 summaries,_ = self.train_batch()
+                # print("TRAINING ZHALA")
                 if self.steps_taken % self.config['tensorboard_interval'] == 0:
                     self.train_writer.add_summary(summaries, global_step=self.steps_taken)
                 if self.steps_taken % self.config['double_q_freq'] == 0.:
                     print("double q swap") 
                     self.update_target_network() #DDQN
+        print("ZHALA RE")
         return total_reward
 
 
@@ -262,7 +267,8 @@ class QAgent(object):
         # Sample experience
         xp_states, xp_actions, xp_rewards, xp_done, xp_next = self.replay_memory.sample_experience(
             self.config['batch_size'],
-            self.config['state_time']
+            self.config['state_time'],
+            self.steps_taken
         )
 
         # Create a mask on which output to update
