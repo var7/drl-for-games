@@ -10,7 +10,7 @@ from configs import mario_config_PER
 from util import get_log_dir
 
 if __name__ == '__main__':
-    config = mario_config
+    config = mario_config_PER
     log_dir = get_log_dir('log/PER', config['game']+'_'+str(config['double_q']))#CREATE A LOG DIRECTORY FOR THE GIVEN GAME
     agent = QAgent(config=config, log_dir=log_dir) #CREATE THE AGENT WITH THE GIVEN CONFIGURATION AND SPECIFY THE DIRECTORY FOR SAVING THE LOGS
     saver = tf.train.Saver() #HELPS TO SAVE AND RETRIEVE VARIABLES TO AND FROM CHECKPOINTS
