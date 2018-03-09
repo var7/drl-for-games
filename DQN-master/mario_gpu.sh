@@ -1,5 +1,5 @@
 #!/bin/sh
-#SBATCH -N 3	  # nodes requested
+#SBATCH -N 1	  # nodes requested
 #SBATCH -n 1	  # tasks requested
 #SBATCH --gres=gpu:1
 #SBATCH --mem=16000  # memory in Mb
@@ -31,4 +31,4 @@ export TMP=/disk/scratch/${STUDENT_ID}/
 source /home/${STUDENT_ID}/miniconda3/bin/activate mlp
 
 #python emnist_network_trainer.py --batch_size 128 --epochs 200 --experiment_prefix vgg-net-emnist-sample-exp --dropout_rate 0.4 --batch_norm_use True --strided_dim_reduction True --seed 25012018
-python train_agent.py
+python DQNtrain_agent.py

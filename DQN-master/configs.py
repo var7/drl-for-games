@@ -51,17 +51,20 @@ mario_config = {
     'state_memory': 10 ** 5,
     'state_time': 4,
 
-    'episodes': 10 ** 6,
+    'episodes': 10 ** 7,
     'episodes_validate': 100,
     'episodes_validate_runs': 1,
-    'episodes_save_interval': 200,
+    'episodes_save_interval': 10,
+    'replay_save_interval': 200,
     'tensorboard_interval':100,
 
     'batch_size': 32,
 
-    'step_startrl': 5 * 10 ** 4, 
-    'step_eps_min': 1. / (10. ** 6.),
+    'step_startrl': 10 ** 5, 
+    # 'step_eps_min': 1. / (10. ** 6.),
+    'step_eps_min': 10 ** -5,
     'step_eps_mul': 1.,
+    'change_eps' : 5 * 10 **4,
 
     'eps_minval': .1,
 

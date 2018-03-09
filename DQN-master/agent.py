@@ -6,6 +6,7 @@ import numpy as np
 import tensorflow as tf
 import gym
 import gym_rle
+import cv2
 from replay import Experience
 
 import pickle
@@ -130,8 +131,10 @@ class QAgent(object):
         self.steps_taken=self.session.run(self.steps)
 
     def update_epsilon_and_steps(self): #################################################################
-        if self.steps_taken > self.config['step_startrl']:
-            self.eps = max(self.config['eps_minval'],self.eps*self.config['step_eps_mul']-self.config['step_eps_min'])
+        # if self.steps_taken > self.config['step_startrl']:
+        #     self.eps = max(self.config['eps_minval'],self.eps*self.config['step_eps_mul']-self.config['step_eps_min'])
+        if self.steps_taken % self.config['change_eps']==0:
+            self.eps = max(self.config['eps_minval'],self.eps-self.config['step_eps_min'])
         self.steps_taken += 1
 
     def get_steps(self): ###############################################################################
@@ -171,6 +174,7 @@ class QAgent(object):
         done = False # FLAG FOR IS THE GAME DONE
         press_fire = True # FLAG FOR START GAME
         total_reward = 0 # RETURNS
+        reward = 0
         while not done: #WHILE NOT END OF EPISODE
             if press_fire: # START THE EPISODE
                 press_fire = False # SO THAT IT DOES NOT RESET AGAIN AND AGAIN
@@ -178,11 +182,18 @@ class QAgent(object):
                 if 'ale.lives' in info:
                     self.ale_lives = info['ale.lives']
             else: #END IT?
-                self.update_epsilon_and_steps()
+                if self.steps_taken % self.config['change_eps']==0:
+                    self.eps = max(self.config['eps_minval'],self.eps-self.config['step_eps_min'])
+                self.steps_taken += 1
                 new_frame,reward,done, info = self.act(state,self.eps,True)
             state = self.update_state(state, new_frame) #CONCATENATE THE CURRENT AND THE NEXT STATE
+            # cv2.imwrite('state.png',state)
+            # input()
             total_reward += reward #ADD THE REWARD
-
+            if(reward<0):
+                print(reward)
+                done=True
+                self.env.reset()
             if self.steps_taken > self.config['step_startrl']: #CURRENT STEP TO NEXT
                 summaries,_ = self.train_batch()
                 if self.steps_taken % self.config['tensorboard_interval'] == 0:
@@ -190,6 +201,7 @@ class QAgent(object):
                 if self.steps_taken % self.config['double_q_freq'] == 0.:
                     print("double q swap") 
                     self.update_target_network() #DDQN
+
         return total_reward
 
 
@@ -230,7 +242,7 @@ class QAgent(object):
         #print raw_frame, reward, done, info #PRINT THE ABOVE THINGS
         
         # Clip rewards to -1,0,1
-        reward = np.sign(reward)
+        # reward = np.sign(reward)
 
         # Preprocess the output state
         new_frame = self.config['frame'](raw_frame) #CROP THE NEW FRAME
@@ -246,6 +258,8 @@ class QAgent(object):
             if self.ale_lives is not None and ('ale.lives' in info) and info['ale.lives']<self.ale_lives:
                 store_done = True
                 self.ale_lives = info['ale.lives']
+            if(reward<0):
+                store_done = True
             self.replay_memory.add(state[:,:,-1],action,reward,store_done)
         return new_frame, reward, done, info
 
