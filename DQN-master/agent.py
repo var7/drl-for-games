@@ -131,10 +131,8 @@ class QAgent(object):
         self.steps_taken=self.session.run(self.steps)
 
     def update_epsilon_and_steps(self): #################################################################
-        # if self.steps_taken > self.config['step_startrl']:
-        #     self.eps = max(self.config['eps_minval'],self.eps*self.config['step_eps_mul']-self.config['step_eps_min'])
-        if self.steps_taken % self.config['change_eps']==0:
-            self.eps = max(self.config['eps_minval'],self.eps-self.config['step_eps_min'])
+        if self.steps_taken > self.config['step_startrl']:
+            self.eps = max(self.config['eps_minval'],self.eps*self.config['step_eps_mul']-self.config['step_eps_min'])
         self.steps_taken += 1
 
     def get_steps(self): ###############################################################################
@@ -182,13 +180,10 @@ class QAgent(object):
                 if 'ale.lives' in info:
                     self.ale_lives = info['ale.lives']
             else: #END IT?
-                if self.steps_taken % self.config['change_eps']==0:
-                    self.eps = max(self.config['eps_minval'],self.eps-self.config['step_eps_min'])
-                self.steps_taken += 1
+                self.update_epsilon_and_steps()
                 new_frame,reward,done, info = self.act(state,self.eps,True)
             state = self.update_state(state, new_frame) #CONCATENATE THE CURRENT AND THE NEXT STATE
-            # cv2.imwrite('state.png',state)
-            # input()
+            
             total_reward += reward #ADD THE REWARD
             if(reward<0):
                 print(reward)
@@ -201,7 +196,7 @@ class QAgent(object):
                 if self.steps_taken % self.config['double_q_freq'] == 0.:
                     print("double q swap") 
                     self.update_target_network() #DDQN
-
+        # cv2.imwrite('state.png',new_frame)
         return total_reward
 
 
@@ -242,7 +237,7 @@ class QAgent(object):
         #print raw_frame, reward, done, info #PRINT THE ABOVE THINGS
         
         # Clip rewards to -1,0,1
-        # reward = np.sign(reward)
+        reward = np.sign(reward)
 
         # Preprocess the output state
         new_frame = self.config['frame'](raw_frame) #CROP THE NEW FRAME
