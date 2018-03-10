@@ -71,7 +71,7 @@ mario_config = {
 }
 
 mario_config_PER = {
-    'double_q': False, # USE DDQN OR NOT
+    'double_q': True, # USE DDQN OR NOT
     'double_q_freq': 10000, #CHANGE FREQUENCY
 
     'game': 'SuperMarioAllStarsDeterministic-v4',
