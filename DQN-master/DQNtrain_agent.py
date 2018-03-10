@@ -49,8 +49,9 @@ if __name__ == '__main__':
         if (episode % int((config['episodes_save_interval']))==0):
             agent._update_steps_and_epsilon()
             saver.save(agent.session,'%s/episode_%d.ckpt'%(log_dir,episode))
-
-        if (episode % int((config['episodes_save_interval'])/c)==0):
+        # print("EPISODE : ",episode)
+        # print("SHIT : ",(config['replay_save_interval'])/c)
+        if ((episode % int((config['replay_save_interval'])/c)) == 0):
             if((c<16)):
                 c*=2
             else:
