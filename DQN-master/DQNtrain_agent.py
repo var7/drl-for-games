@@ -22,8 +22,8 @@ if __name__ == '__main__':
     load_episode=-1
 
     ###CHANGE WHEN RESTARTING FROM A CHECKPOINT###
-    load_episode=1580
-    log_dir1 = "log/"+dir+"/2018-03-12_11-52-46_SuperMarioAllStarsDeterministic-v4_True"
+    load_episode=3980
+    log_dir1 = "log/"+dir+"/2018-03-12_19-51-13_SuperMarioAllStarsDeterministic-v4_False"
     print(log_dir)
     saver.restore(agent.session,log_dir1+'/episode_%d.ckpt'%(load_episode))
     agent.set_agent()
