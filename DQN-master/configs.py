@@ -37,6 +37,39 @@ from util import preprocess_supermario
 #     'gamma': 0.99,
 # }
 
+mario_config_dqn = {
+    'double_q': False, # USE DDQN OR NOT
+    'double_q_freq': 10000, #CHANGE FREQUENCY
+
+    'game': 'SuperMarioAllStarsDeterministic-v4',
+    'frame': preprocess_supermario,
+    'q': AtariDQN,
+    'q_params': {},
+    'actions': 11,
+    'state_dtype': np.uint8,
+    'state_shape': [84, 84],
+    'state_memory': 10 ** 5,
+    'state_time': 4,
+
+    'episodes': 10 ** 7,
+    'episodes_validate': 100,
+    'episodes_validate_runs': 1,
+    'episodes_save_interval': 10,
+    'replay_save_interval': 200,
+    'tensorboard_interval':100,
+
+    'batch_size': 32,
+
+    'step_startrl': 5*10 ** 5,
+    'step_eps_min': 2 * 10 ** -7,
+    'step_eps_mul': 1.,
+
+    'eps_minval': .1,
+
+    'gamma': 0.99,
+
+}
+
 mario_config = {
     'double_q': True, # USE DDQN OR NOT
     'double_q_freq': 10000, #CHANGE FREQUENCY
