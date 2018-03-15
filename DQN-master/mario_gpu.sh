@@ -31,4 +31,4 @@ export TMP=/disk/scratch/${STUDENT_ID}/
 source /home/${STUDENT_ID}/miniconda3/bin/activate mlp
 
 #python emnist_network_trainer.py --batch_size 128 --epochs 200 --experiment_prefix vgg-net-emnist-sample-exp --dropout_rate 0.4 --batch_norm_use True --strided_dim_reduction True --seed 25012018
-python DQNtrain_agent.py
+python DDQNtrain_agent.py

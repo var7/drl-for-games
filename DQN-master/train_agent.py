@@ -6,7 +6,7 @@ import numpy as np
 import tensorflow as tf
 
 from agent import QAgent
-from configs import mario_config
+from configs import mario_config_dqn
 from util import get_log_dir
 
 if __name__ == '__main__':
@@ -22,8 +22,8 @@ if __name__ == '__main__':
     load_episode=-1
 
     ###CHANGE WHEN RESTARTING FROM A CHECKPOINT###
-    load_episode=5350
-    log_dir1 = "log/"+dir+"/2018-03-13_10-02-42_SuperMarioAllStarsDeterministic-v4_False"
+    load_episode=7030
+    log_dir1 = "log/"+dir+"/2018-03-14_18-55-29_SuperMarioAllStarsDeterministic-v4_False"
     print(log_dir)
     saver.restore(agent.session,log_dir1+'/episode_%d.ckpt'%(load_episode))
     agent.set_agent()
