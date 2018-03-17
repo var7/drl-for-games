@@ -17,13 +17,13 @@ if __name__ == '__main__':
         dir = 'DQN'
     log_dir = get_log_dir('log/'+dir, config['game']+'_'+str(config['double_q']))#CREATE A LOG DIRECTORY FOR THE GIVEN GAME
     agent = QAgent(config=config, log_dir=log_dir) #CREATE THE AGENT WITH THE GIVEN CONFIGURATION AND SPECIFY THE DIRECTORY FOR SAVING THE LOGS
-    saver = tf.train.Saver(max_to_keep=1000) #HELPS TO SAVE AND RETRIEVE VARIABLES TO AND FROM CHECKPOINTS
+    saver = tf.train.Saver(max_to_keep=10000) #HELPS TO SAVE AND RETRIEVE VARIABLES TO AND FROM CHECKPOINTS
     c=1
     load_episode=-1
 
     ###CHANGE WHEN RESTARTING FROM A CHECKPOINT###
-    load_episode=8120
-    log_dir1 = "log/"+dir+"/2018-03-16_17-35-18_SuperMarioAllStarsDeterministic-v4_True"
+    load_episode=9240
+    log_dir1 = "log/"+dir+"/2018-03-17_04-20-37_SuperMarioAllStarsDeterministic-v4_True"
     print(log_dir)
     saver.restore(agent.session,log_dir1+'/episode_%d.ckpt'%(load_episode))
     agent.set_agent()
