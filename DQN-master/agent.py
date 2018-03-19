@@ -213,8 +213,8 @@ class QAgent(object):
                 new_frame, reward, done,_ = self.act(state=state, epsilon=epsilon, store=False)
             state = self.update_state(old_state=state, new_frame=new_frame)
             total_reward += reward
-            # if(reward<0):
-            #     done=True
+            if(reward<0):
+                done=True
             if visualise:
                 self.env.render()
         return total_reward
