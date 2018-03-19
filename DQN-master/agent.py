@@ -239,7 +239,7 @@ class QAgent(object):
         #print raw_frame, reward, done, info #PRINT THE ABOVE THINGS
         
         # Clip rewards to -1,0,1
-        reward = np.sign(reward)
+        # reward = np.sign(reward)
 
         # Preprocess the output state
         new_frame = self.config['frame'](raw_frame) #CROP THE NEW FRAME
